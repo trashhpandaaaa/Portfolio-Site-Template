@@ -1,6 +1,6 @@
 'use client'
 import { motion } from 'framer-motion';
-import { Send, Linkedin, Twitter, Facebook, Instagram, Github, X } from 'lucide-react';
+import { Send, Linkedin, Twitter, Facebook, Instagram, Github } from 'lucide-react';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 
