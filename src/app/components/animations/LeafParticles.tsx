@@ -1,4 +1,3 @@
-// src/app/components/animations/LeafParticles.tsx
 'use client'
 import { useEffect, useRef } from 'react';
 
@@ -17,17 +16,18 @@ export default function LeafParticles() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    
+    if (!canvas) return; // Ensure canvas exists
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) return; // Ensure context exists
 
+    // Function to resize the canvas dynamically
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     resizeCanvas();
 
+    // Create leaf particles
     const leaves: Leaf[] = Array.from({ length: 20 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -38,6 +38,7 @@ export default function LeafParticles() {
       rotationSpeed: (Math.random() - 0.5) * 0.1
     }));
 
+    // Function to draw a leaf shape
     function drawLeaf(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, rotation: number) {
       ctx.save();
       ctx.translate(x, y);
@@ -55,7 +56,12 @@ export default function LeafParticles() {
       ctx.restore();
     }
 
+    let animationId: number;
+
+    // Animation loop
     function animate() {
+      if (!canvas || !ctx) return; // Safety check for TypeScript
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       leaves.forEach(leaf => {
@@ -63,6 +69,7 @@ export default function LeafParticles() {
         leaf.y += leaf.speedY;
         leaf.rotation += leaf.rotationSpeed;
 
+        // Reset leaf when it moves out of the screen
         if (leaf.y < -leaf.size) {
           leaf.y = canvas.height + leaf.size;
           leaf.x = Math.random() * canvas.width;
@@ -71,13 +78,18 @@ export default function LeafParticles() {
         drawLeaf(ctx, leaf.x, leaf.y, leaf.size, leaf.rotation);
       });
 
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
     }
 
     animate();
 
+    // Resize event listener
     window.addEventListener('resize', resizeCanvas);
-    return () => window.removeEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationId);
+    };
   }, []);
 
   return (

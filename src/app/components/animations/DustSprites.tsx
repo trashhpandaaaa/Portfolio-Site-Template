@@ -1,4 +1,3 @@
-// src/app/components/animations/DustSprites.tsx
 'use client'
 import { useEffect, useRef } from 'react';
 
@@ -36,10 +35,12 @@ export default function DustSprites() {
       speed: number;
       opacity: number;
       angle: number;
+      canvas: HTMLCanvasElement;
 
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+      constructor(canvas: HTMLCanvasElement) {
+        this.canvas = canvas;
+        this.x = Math.random() * this.canvas.width;
+        this.y = Math.random() * this.canvas.height;
         this.size = Math.random() * 3 + 1;
         this.speed = Math.random() * 0.5 + 0.1;
         this.opacity = Math.random() * 0.5 + 0.3;
@@ -52,8 +53,8 @@ export default function DustSprites() {
         this.angle += 0.01;
 
         if (this.y < 0) {
-          this.y = canvas.height;
-          this.x = Math.random() * canvas.width;
+          this.y = this.canvas.height;
+          this.x = Math.random() * this.canvas.width;
         }
       }
 
@@ -67,19 +68,20 @@ export default function DustSprites() {
 
     const sprites: Sprite[] = Array.from(
       { length: 50 }, 
-      () => new DustSprite()
+      () => new DustSprite(canvas)
     );
 
     let animationId: number;
 
     function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      sprites.forEach(sprite => {
-        sprite.update();
-        sprite.draw(ctx);
-      });
-      animationId = requestAnimationFrame(animate);
-    }
+        if (!canvas || !ctx) return; // Ensure canvas and context exist
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        sprites.forEach(sprite => {
+          sprite.update();
+          sprite.draw(ctx);
+        });
+        animationId = requestAnimationFrame(animate);
+      }      
 
     animate();
 
