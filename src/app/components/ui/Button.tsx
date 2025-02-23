@@ -19,7 +19,7 @@ export default function Button({
   size = 'md',
   className
 }: ButtonProps) {
-  const baseStyle = "rounded-full font-medium transition-all duration-300 relative overflow-hidden";
+  const baseStyle = "rounded-full font-medium transition-all duration-300 relative overflow-hidden cursor-pointer"; // Added cursor-pointer
   
   const variants = {
     primary: "bg-forest text-cream hover:bg-forest/90",

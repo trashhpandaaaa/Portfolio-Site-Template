@@ -6,6 +6,14 @@ import Button from '../ui/Button';
 import DustSprites from '../animations/DustSprites';
 
 export default function Hero() {
+  // Function to handle smooth scrolling
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <DustSprites />
@@ -63,8 +71,15 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Button>View Projects</Button>
-          <Button variant="secondary">Contact Me</Button>
+          <Button onClick={() => scrollToSection('projects')}>
+            View Projects
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => scrollToSection('contact')}
+          >
+            Contact Me
+          </Button>
         </motion.div>
       </motion.div>
     </section>

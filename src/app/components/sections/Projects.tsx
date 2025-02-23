@@ -1,30 +1,30 @@
-'use client'
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import Card from '../ui/Card';
-
-const projects = [
-  {
-    title: "Toto-Rain",
-    description: "I wonder if Totoro got the umbrella today?",
-    image: "/images/project1.gif",
-    tags: ["React", "Weather API", "Animation"]
-  },
-  {
-    title: "Kiki's Delivery Service",
-    description: "We deliver with cats and witches.",
-    image: "/images/project2.gif",
-    tags: ["Next.js", "MDX", "Framer Motion"]
-  },
-  {
-    title: "Kodama",
-    description: "Protect the forest Princess Mononoke!!",
-    image: "/images/project3.gif",
-    tags: ["React Native", "Firebase", "Illustration"]
-  }
-];
+"use client";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import Card from "../ui/Card";
 
 export default function Projects() {
+  const projects = [
+    {
+      title: "Toto-Rain",
+      description: "I wonder if Totoro got the umbrella today?",
+      image: "/images/project1.gif",
+      tags: ["React", "Weather API", "Animation"],
+    },
+    {
+      title: "Kiki's Delivery Service",
+      description: "We deliver with cats and witches.",
+      image: "/images/project2.gif",
+      tags: ["Next.js", "MDX", "Framer Motion"],
+    },
+    {
+      title: "Kodama",
+      description: "Protect the forest, Princess Mononoke!!",
+      image: "/images/project3.gif",
+      tags: ["React Native", "Firebase", "Illustration"],
+    },
+  ];
+
   return (
     <section className="py-20" id="projects">
       <div className="max-w-7xl mx-auto px-4">
@@ -51,15 +51,15 @@ export default function Projects() {
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
                 />
               </div>
-              
+
               <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-              <p className="text-sage mb-4">{project.description}</p>
-              
+              <p className="text-gray-500 mb-4">{project.description}</p>
+
               <div className="flex flex-wrap gap-2">
-                {project.tags.map(tag => (
+                {project.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 bg-sage/10 text-sage rounded-full text-sm"
+                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
                   >
                     {tag}
                   </span>
