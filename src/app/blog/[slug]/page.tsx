@@ -2,6 +2,28 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import { Metadata } from 'next';
+import React from 'react';
+
+// Fix the type definition for the page props
+interface BlogPostParams {
+  params: {
+    slug: string;
+  };
+}
+
+// Use the correct typing for the generateMetadata function
+export async function generateMetadata({ params }: BlogPostParams): Promise<Metadata> {
+  // Fetch the blog post data based on the slug
+  // This is a placeholder, replace with your actual data fetching logic
+  const post = await fetchBlogPost(params.slug);
+  
+  return {
+    title: post.title,
+    description: post.description,
+    // Add other metadata as needed
+  };
+}
 
 // This would typically come from a CMS or database
 const blogPosts = [
@@ -178,13 +200,10 @@ const blogPosts = [
   }
 ];
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((post) => post.id === params.slug);
+// Use the correct typing for the page component
+export default async function BlogPost({ params }: BlogPostParams) {
+  const post = await fetchBlogPost(params.slug);
   
-  if (!post) {
-    notFound();
-  }
-
   return (
     <main className="pt-28 pb-20">
       <div className="max-w-4xl mx-auto px-4">
@@ -238,4 +257,14 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
       </div>
     </main>
   );
-} 
+}
+
+// This is a placeholder function - replace with your actual data fetching logic
+async function fetchBlogPost(slug: string) {
+  // In a real app, you would fetch data from your API or CMS
+  return {
+    title: `Blog Post: ${slug}`,
+    description: `Description for ${slug}`,
+    content: `<p>This is the content for ${slug}</p>`
+  };
+}

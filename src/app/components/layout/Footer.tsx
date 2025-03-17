@@ -41,12 +41,11 @@ export default function Footer() {
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center"
               >
-                <span className="mr-2">🌱</span>
                 <span>Aakriti Rai</span>
               </motion.div>
             </Link>
             <p className="text-sage dark:text-gray-400 text-center md:text-left">
-              Creating magical digital experiences inspired by Studio Ghibli
+              Creating magical digital experiences
             </p>
           </div>
           
@@ -111,7 +110,6 @@ export default function Footer() {
             >
               <Heart className="h-4 w-4 fill-current" />
             </motion.span>
-            and a sprinkle of Ghibli magic
           </motion.p>
         </div>
       </div>

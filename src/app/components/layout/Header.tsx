@@ -26,7 +26,6 @@ export default function Header() {
               whileHover={{ scale: 1.05 }}
               className="flex items-center"
             >
-              <span className="mr-2">🌱</span>
               <span>Aakriti Rai</span>
             </motion.div>
           </Link>
