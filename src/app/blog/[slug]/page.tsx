@@ -200,10 +200,19 @@ const blogPosts = [
   }
 ];
 
-// Use the correct typing for the page component
-export default async function BlogPost({ params }: BlogPostParams) {
-  const post = await fetchBlogPost(params.slug);
+type BlogParams = {
+  params: {
+    slug: string;
+  };
+};
+
+export default function BlogPost({ params }: BlogParams) {
+  const post = blogPosts.find((post) => post.id === params.slug);
   
+  if (!post) {
+    notFound();
+  }
+
   return (
     <main className="pt-28 pb-20">
       <div className="max-w-4xl mx-auto px-4">
