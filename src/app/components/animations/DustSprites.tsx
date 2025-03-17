@@ -1,103 +1,99 @@
 'use client'
-import { useEffect, useRef } from 'react';
 
-interface Sprite {
-  x: number;
-  y: number;
-  size: number;
-  speed: number;
-  opacity: number;
-  angle: number;
-  update: () => void;
-  draw: (ctx: CanvasRenderingContext2D) => void;
-}
+import { motion } from 'framer-motion';
+import { useEffect, useState, useMemo } from 'react';
 
 export default function DustSprites() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const updateCanvasSize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    updateCanvasSize();
-
-    class DustSprite implements Sprite {
-      x: number;
-      y: number;
-      size: number;
-      speed: number;
-      opacity: number;
-      angle: number;
-      canvas: HTMLCanvasElement;
-
-      constructor(canvas: HTMLCanvasElement) {
-        this.canvas = canvas;
-        this.x = Math.random() * this.canvas.width;
-        this.y = Math.random() * this.canvas.height;
-        this.size = Math.random() * 3 + 1;
-        this.speed = Math.random() * 0.5 + 0.1;
-        this.opacity = Math.random() * 0.5 + 0.3;
-        this.angle = Math.random() * Math.PI * 2;
-      }
-
-      update() {
-        this.y -= this.speed;
-        this.x += Math.sin(this.angle) * 0.2;
-        this.angle += 0.01;
-
-        if (this.y < 0) {
-          this.y = this.canvas.height;
-          this.x = Math.random() * this.canvas.width;
-        }
-      }
-
-      draw(ctx: CanvasRenderingContext2D) {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.fill();
-      }
-    }
-
-    const sprites: Sprite[] = Array.from(
-      { length: 50 }, 
-      () => new DustSprite(canvas)
-    );
-
-    let animationId: number;
-
-    function animate() {
-        if (!canvas || !ctx) return; // Ensure canvas and context exist
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        sprites.forEach(sprite => {
-          sprite.update();
-          sprite.draw(ctx);
-        });
-        animationId = requestAnimationFrame(animate);
-      }      
-
-    animate();
-
-    window.addEventListener('resize', updateCanvasSize);
-
-    return () => {
-      window.removeEventListener('resize', updateCanvasSize);
-      cancelAnimationFrame(animationId);
-    };
+  // Pre-calculate sprite configurations to ensure consistency
+  const sprites = useMemo(() => {
+    return Array.from({ length: 15 }, (_, i) => ({
+      id: i,
+      size: 5 + ((i % 3) * 5), // Deterministic sizes: 5px, 10px, or 15px
+      x: `${((i + 1) * 6.5) % 100}%`, // Spread evenly across the width
+      delay: (i * 0.2) % 2, // Staggered delays
+      duration: 4 + (i % 3), // Varying durations: 4s, 5s, or 6s
+    }));
   }, []);
 
+  // Only show animations after client-side hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null; // Return nothing during SSR
+  }
+
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-10"
-      aria-hidden="true"
-    />
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {sprites.map((sprite) => (
+        <motion.div
+          key={sprite.id}
+          className="absolute bottom-0"
+          style={{ left: sprite.x }}
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{
+            y: '-100vh',
+            opacity: [0, 1, 1, 0],
+            x: [
+              0,
+              Math.sin(sprite.id) * 50,
+              Math.sin(sprite.id + 2) * 50,
+              0
+            ],
+          }}
+          transition={{
+            duration: sprite.duration,
+            delay: sprite.delay,
+            repeat: Infinity,
+            repeatDelay: sprite.id * 0.1, // Deterministic repeat delay
+            ease: 'easeInOut',
+          }}
+        >
+          <div
+            className="relative bg-black dark:bg-gray-300 rounded-full"
+            style={{
+              width: `${sprite.size}px`,
+              height: `${sprite.size}px`,
+            }}
+          >
+            {/* Eyes */}
+            <motion.div
+              className="absolute bg-white dark:bg-gray-800 rounded-full"
+              style={{
+                width: `${sprite.size * 0.3}px`,
+                height: `${sprite.size * 0.3}px`,
+                top: `${sprite.size * 0.2}px`,
+                left: `${sprite.size * 0.2}px`,
+              }}
+              animate={{ scale: [1, 0.8, 1] }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatType: 'reverse',
+              }}
+            />
+            <motion.div
+              className="absolute bg-white dark:bg-gray-800 rounded-full"
+              style={{
+                width: `${sprite.size * 0.3}px`,
+                height: `${sprite.size * 0.3}px`,
+                top: `${sprite.size * 0.2}px`,
+                right: `${sprite.size * 0.2}px`,
+              }}
+              animate={{ scale: [1, 0.8, 1] }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatType: 'reverse',
+                delay: 0.5,
+              }}
+            />
+          </div>
+        </motion.div>
+      ))}
+    </div>
   );
 }

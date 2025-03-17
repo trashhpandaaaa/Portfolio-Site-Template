@@ -2,6 +2,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+import PageTransition from './components/animations/PageTransition';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,8 +19,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} bg-cream dark:bg-slate-900 dark:text-white transition-colors duration-300`}>
+        <Header />
+        <PageTransition>
+          {children}
+        </PageTransition>
+        <Footer />
+      </body>
     </html>
   );
 }

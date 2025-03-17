@@ -1,47 +1,53 @@
 // src/app/components/ui/Button.tsx
 'use client'
-import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-interface ButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  onClick?: () => void;
   variant?: 'primary' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
+  fullWidth?: boolean;
 }
 
-export default function Button({ 
-  children, 
-  onClick, 
+export default function Button({
+  children,
   variant = 'primary',
   size = 'md',
-  className
+  fullWidth = false,
+  className,
+  ...props
 }: ButtonProps) {
-  const baseStyle = "rounded-full font-medium transition-all duration-300 relative overflow-hidden cursor-pointer"; // Added cursor-pointer
+  const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest dark:focus-visible:ring-green-400 disabled:opacity-50";
   
-  const variants = {
-    primary: "bg-forest text-cream hover:bg-forest/90",
-    secondary: "bg-sage text-cream hover:bg-sage/90",
-    outline: "border-2 border-forest text-forest hover:bg-forest/10"
+  const variantStyles = {
+    primary: "bg-forest text-white hover:bg-forest/90 dark:bg-green-700 dark:hover:bg-green-600",
+    secondary: "bg-sage/20 text-forest hover:bg-sage/30 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-900/50",
+    outline: "border border-forest text-forest hover:bg-forest/10 dark:border-green-500 dark:text-green-400 dark:hover:bg-green-900/30"
   };
-
-  const sizes = {
-    sm: "px-4 py-2 text-sm",
-    md: "px-6 py-3 text-base",
-    lg: "px-8 py-4 text-lg"
+  
+  const sizeStyles = {
+    sm: "text-sm px-3 py-1.5",
+    md: "text-base px-4 py-2",
+    lg: "text-lg px-6 py-3"
   };
+  
+  const widthStyles = fullWidth ? "w-full" : "";
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className={cn(baseStyle, variants[variant], sizes[size], className)}
-      onClick={onClick}
+    <button
+      className={cn(
+        baseStyles,
+        variantStyles[variant],
+        sizeStyles[size],
+        widthStyles,
+        "hover:scale-[1.02] active:scale-[0.98] transform transition-transform",
+        className
+      )}
+      {...props}
     >
       {children}
-      <span className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity" />
-    </motion.button>
+    </button>
   );
 }

@@ -10,17 +10,13 @@ interface CardProps {
 
 export default function Card({ children, className }: CardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+    <div 
       className={cn(
-        "bg-paper rounded-lg shadow-lg p-6 relative overflow-hidden",
-        "before:content-[''] before:absolute before:inset-0 before:bg-sage/5 before:opacity-50",
+        "bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden p-6 border border-forest/5 dark:border-green-900/20",
         className
       )}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
