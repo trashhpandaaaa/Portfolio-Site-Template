@@ -5,26 +5,6 @@ import { ArrowLeft } from 'lucide-react';
 import { Metadata } from 'next';
 import React from 'react';
 
-// Fix the type definition for the page props
-interface BlogPostParams {
-  params: {
-    slug: string;
-  };
-}
-
-// Use the correct typing for the generateMetadata function
-export async function generateMetadata({ params }: BlogPostParams): Promise<Metadata> {
-  // Fetch the blog post data based on the slug
-  // This is a placeholder, replace with your actual data fetching logic
-  const post = await fetchBlogPost(params.slug);
-  
-  return {
-    title: post.title,
-    description: post.description,
-    // Add other metadata as needed
-  };
-}
-
 // This would typically come from a CMS or database
 const blogPosts = [
   {
@@ -200,13 +180,13 @@ const blogPosts = [
   }
 ];
 
-type BlogParams = {
+interface BlogPageParams {
   params: {
     slug: string;
   };
-};
+}
 
-export default function BlogPost({ params }: BlogParams) {
+export default function BlogPost({ params }: BlogPageParams) {
   const post = blogPosts.find((post) => post.id === params.slug);
   
   if (!post) {
@@ -266,14 +246,4 @@ export default function BlogPost({ params }: BlogParams) {
       </div>
     </main>
   );
-}
-
-// This is a placeholder function - replace with your actual data fetching logic
-async function fetchBlogPost(slug: string) {
-  // In a real app, you would fetch data from your API or CMS
-  return {
-    title: `Blog Post: ${slug}`,
-    description: `Description for ${slug}`,
-    content: `<p>This is the content for ${slug}</p>`
-  };
 }
