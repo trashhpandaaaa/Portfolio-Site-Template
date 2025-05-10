@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { Metadata } from 'next';
 import React from 'react';
+import { ReadingProgressBar } from '@/components/ReadingProgressBar';
+import { ArticleJsonLd } from 'next-seo';
 
 // This would typically come from a CMS or database
 const blogPosts = [
@@ -18,15 +20,27 @@ const blogPosts = [
     content: `
       <p>Ever since I first watched "My Neighbor Totoro" as a child, I've been captivated by the magical worlds created by Studio Ghibli. There's something special about how Hayao Miyazaki and his team blend fantasy with reality, creating spaces that feel both magical and familiar.</p>
       
+      <blockquote class="ghibli-quote">
+        <p>"The concept of portraying evil and then destroying it - I know this is considered mainstream, but I think it's rotten storytelling. It's just bad to show something where there's no chance. I want people to understand the real problems in the world. I don't want to teach them a fancy technique. I want them to gain the power to think for themselves."</p>
+        <cite>— Hayao Miyazaki</cite>
+      </blockquote>
+      
       <p>The attention to detail in Ghibli films is extraordinary. From the way light filters through leaves to the thoughtful portrayal of everyday moments—preparing food, cleaning a house, or simply sitting in silence—these films celebrate the beauty in ordinary life.</p>
+      
+      <figure class="image-highlight">
+        <img src="/images/totoro-nature.jpg" alt="Nature scene from My Neighbor Totoro" />
+        <figcaption>The lush, detailed environments in My Neighbor Totoro showcase Miyazaki's attention to natural beauty</figcaption>
+      </figure>
       
       <h2>Finding My Design Voice</h2>
       
       <p>As I grew into my career as a designer and developer, I found myself constantly returning to these films for inspiration. What could I learn from Ghibli's approach to storytelling and apply to digital experiences?</p>
       
+      <p class="pullquote">The magic of Ghibli isn't just in fantastical elements, but in finding wonder within everyday moments.</p>
+      
       <p>I realized that what makes Ghibli films so captivating is their balance of:</p>
       
-      <ul>
+      <ul class="ghibli-list">
         <li>Attention to small details that create atmosphere</li>
         <li>Allowing space for quiet moments</li>
         <li>Balancing technology with nature</li>
@@ -186,64 +200,158 @@ interface BlogPageParams {
   };
 }
 
+// Generate metadata for better SEO
+export async function generateMetadata({ params }: BlogPageParams): Promise<Metadata> {
+  const post = blogPosts.find((post) => post.id === params.slug);
+  
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+      description: 'The requested blog post could not be found.'
+    };
+  }
+  
+  return {
+    title: `${post.title} | Ghibli Portfolio`,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      images: [
+        {
+          url: post.coverImage,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      type: 'article',
+      publishedTime: new Date(post.date).toISOString(),
+      tags: post.tags,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: [post.coverImage],
+    }
+  };
+}
+
 export default function BlogPost({ params }: BlogPageParams) {
   const post = blogPosts.find((post) => post.id === params.slug);
   
   if (!post) {
     notFound();
   }
+  
+  // Find related posts based on matching tags
+  const relatedPosts = blogPosts
+    .filter(p => p.id !== post.id) // Exclude current post
+    .filter(p => p.tags.some(tag => post.tags.includes(tag))) // At least one common tag
+    .slice(0, 2); // Limit to two related posts
 
   return (
-    <main className="pt-28 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
-        <Link 
-          href="/blog"
-          className="inline-flex items-center text-sage hover:text-forest dark:text-gray-400 dark:hover:text-green-400 mb-8"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to all posts
-        </Link>
+    <>
+      <ReadingProgressBar />
+      
+      <ArticleJsonLd
+        url={`https://yourdomain.com/blog/${post.id}`}
+        title={post.title}
+        images={[post.coverImage]}
+        datePublished={new Date(post.date).toISOString()}
+        description={post.excerpt}
+        authorName="Your Name"
+        publisherName="Your Portfolio"
+        publisherLogo="https://yourdomain.com/logo.png"
+      />
+      
+      <main className="pt-28 pb-20">
+        <div className="max-w-4xl mx-auto px-4">
+          <Link 
+            href="/blog"
+            className="inline-flex items-center text-sage hover:text-forest dark:text-gray-400 dark:hover:text-green-400 mb-8"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to all posts
+          </Link>
 
-        <article>
-          <div className="mb-8">
-            <div className="flex items-center gap-3 text-sm text-sage dark:text-gray-400 mb-3">
-              <span>{post.date}</span>
-              <span>•</span>
-              <span>{post.readTime}</span>
+          <article className="mb-16">
+            <div className="mb-8">
+              <div className="flex items-center gap-3 text-sm text-sage dark:text-gray-400 mb-3">
+                <time dateTime={new Date(post.date).toISOString()}>{post.date}</time>
+                <span>•</span>
+                <span>{post.readTime}</span>
+              </div>
+              
+              <h1 className="text-3xl md:text-4xl font-bold mb-4 text-forest dark:text-green-400">
+                {post.title}
+              </h1>
+              
+              <div className="flex flex-wrap gap-2 mb-8">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 bg-forest/10 dark:bg-green-900/30 text-forest dark:text-green-300 rounded-full text-sm"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
-            
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-forest dark:text-green-400">
-              {post.title}
-            </h1>
-            
-            <div className="flex flex-wrap gap-2 mb-8">
-              {post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 bg-forest/10 dark:bg-green-900/30 text-forest dark:text-green-300 rounded-full text-sm"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
 
-          <div className="relative aspect-video w-full mb-10 overflow-hidden rounded-lg">
-            <Image
-              src={post.coverImage}
-              alt={post.title}
-              fill
-              className="object-cover"
-              priority
+            <div className="relative aspect-video w-full mb-10 overflow-hidden rounded-lg shadow-xl">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10"></div>
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                className="object-cover hover:scale-105 transition-transform duration-700"
+                priority
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFeAJcI9QM9QAAAABJRU5ErkJggg=="
+              />
+            </div>
+
+            <div 
+              className="prose prose-lg dark:prose-invert prose-headings:text-forest dark:prose-headings:text-green-400 prose-a:text-forest dark:prose-a:text-green-400 max-w-none prose-img:rounded-lg prose-img:shadow-md hover:prose-a:text-green-600 dark:hover:prose-a:text-green-300 prose-p:leading-relaxed prose-headings:font-display prose-blockquote:border-l-forest dark:prose-blockquote:border-l-green-400"
+              dangerouslySetInnerHTML={{ __html: post.content }}
             />
-          </div>
-
-          <div 
-            className="prose prose-lg dark:prose-invert prose-headings:text-forest dark:prose-headings:text-green-400 prose-a:text-forest dark:prose-a:text-green-400 max-w-none"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
-        </article>
-      </div>
-    </main>
+          </article>
+          
+          {relatedPosts.length > 0 && (
+            <div className="border-t border-gray-200 dark:border-gray-800 pt-10">
+              <h2 className="text-2xl font-bold mb-6 text-forest dark:text-green-400">
+                Related Articles
+              </h2>
+              <div className="grid md:grid-cols-2 gap-8">
+                {relatedPosts.map((relatedPost) => (
+                  <Link
+                    key={relatedPost.id}
+                    href={`/blog/${relatedPost.id}`}
+                    className="group block"
+                  >
+                    <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
+                      <Image
+                        src={relatedPost.coverImage}
+                        alt={relatedPost.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <h3 className="font-medium text-lg mb-2 text-forest dark:text-green-400 group-hover:underline">
+                      {relatedPost.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      {relatedPost.excerpt.substring(0, 100)}...
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+    </>
   );
 }

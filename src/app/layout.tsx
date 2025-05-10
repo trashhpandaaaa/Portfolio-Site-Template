@@ -9,8 +9,27 @@ import PageTransition from './components/animations/PageTransition';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Aakriti Rai',
-  description: 'A magical portfolio inspired by Studio Ghibli',
+  title: {
+    template: '%s | Aakriti Rai',
+    default: 'Aakriti Rai',
+  },
+  description: 'Aakriti Rai',
+  icons: {
+    icon: [
+      {
+        url: '/favicon.ico',
+        sizes: '32x32',
+      },
+      {
+        url: '/favicon.svg',
+        type: 'image/svg+xml',
+      },
+    ],
+    apple: {
+      url: '/apple-touch-icon.png',
+      sizes: '180x180',
+    },
+  },
 };
 
 export default function RootLayout({

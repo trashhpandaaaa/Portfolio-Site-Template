@@ -72,6 +72,77 @@
   .container-custom {
     @apply max-w-7xl mx-auto px-4;
   }
+
+  /* Ghibli-inspired blog elements */
+  .ghibli-quote {
+    @apply relative py-6 px-8 my-8 bg-sage/10 dark:bg-forest/30 rounded-lg border-l-4 border-forest dark:border-green-400 shadow-sm;
+    background-image: url('/images/totoro-silhouette.svg');
+    background-position: right bottom;
+    background-repeat: no-repeat;
+    background-size: 80px;
+  }
+
+  .ghibli-quote p {
+    @apply text-lg italic text-forest dark:text-green-200;
+  }
+
+  .ghibli-quote cite {
+    @apply block mt-4 text-sm text-forest/70 dark:text-green-400/70 not-italic font-medium;
+  }
+
+  .pullquote {
+    @apply text-xl text-center my-8 font-medium text-forest dark:text-green-300 px-10 py-2 border-t border-b border-forest/20 dark:border-green-800 italic;
+  }
+
+  .image-highlight {
+    @apply my-8 rounded-lg overflow-hidden shadow-xl;
+  }
+
+  .image-highlight figcaption {
+    @apply text-sm text-center py-2 bg-forest/10 dark:bg-green-900/50 text-forest/80 dark:text-green-300;
+  }
+
+  .ghibli-list {
+    @apply pl-0 list-none space-y-2;
+  }
+
+  .ghibli-list li {
+    @apply pl-8 relative;
+    background-image: url('/images/leaf-bullet.svg');
+    background-repeat: no-repeat;
+    background-position: 0 0.25em;
+    background-size: 20px;
+  }
+
+  /* Code block styling */
+  pre {
+    @apply p-4 rounded-lg shadow-inner bg-gray-900 dark:bg-black/50 overflow-x-auto border border-gray-700 dark:border-gray-800;
+  }
+
+  code {
+    @apply font-mono text-sm;
+  }
+
+  /* Animation for content elements */
+  .prose h2, 
+  .prose h3, 
+  .prose p, 
+  .prose ul, 
+  .prose ol,
+  .prose blockquote,
+  .prose figure {
+    @apply opacity-90 translate-y-0 transition-all duration-300;
+  }
+
+  .prose h2:hover, 
+  .prose h3:hover, 
+  .prose p:hover, 
+  .prose ul:hover, 
+  .prose ol:hover,
+  .prose blockquote:hover,
+  .prose figure:hover {
+    @apply opacity-100 -translate-y-0.5;
+  }
 }
 
 /* Animations */
